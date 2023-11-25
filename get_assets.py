@@ -1,6 +1,7 @@
+import json
 import os
+import time
 
-import pandas as pd
 from alpaca.trading.client import TradingClient
 from alpaca.trading.enums import AssetClass
 from alpaca.trading.requests import GetAssetsRequest
@@ -16,9 +17,6 @@ trading_client = TradingClient(api_key, secret_key)
 
 search_params = GetAssetsRequest(asset_class=AssetClass.US_EQUITY)
 assets = trading_client.get_all_assets(search_params)
-
-import time
-import json
 
 start_time = time.time()
 assets_json = [json.loads(asset.model_dump_json()) for asset in assets]
