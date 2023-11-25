@@ -1,6 +1,8 @@
 import json
 import time
-import psycopg2
+
+from sqlalchemy import create_engine
+from sqlalchemy.sql import text
 
 # PostgreSQL database details
 database = "stock_data"
@@ -9,61 +11,59 @@ password = "postgres"
 host = "localhost"
 port = "5432"
 
-# Create connection
-conn = psycopg2.connect(database=database, user=user, password=password, host=host, port=port)
-cur = conn.cursor()
+# Create engine
+engine = create_engine(f'postgresql://{user}:{password}@{host}:{port}/{database}')
 
 # assets.jsonからデータを読み込む
 with open('assets.json') as f:
     data = json.load(f)
 
 # テーブルを作成
-cur.execute("""
-    CREATE TABLE IF NOT EXISTS assets (
-        id TEXT PRIMARY KEY,
-        asset_class TEXT,
-        exchange TEXT,
-        symbol TEXT,
-        name TEXT,
-        status TEXT,
-        tradable BOOLEAN,
-        marginable BOOLEAN,
-        shortable BOOLEAN,
-        easy_to_borrow BOOLEAN,
-        fractionable BOOLEAN,
-        min_order_size REAL,
-        min_trade_increment REAL,
-        price_increment REAL
-    )
-""")
-
-# データを削除
-cur.execute("""
-    DELETE FROM assets
-""")
-
-# データを挿入
-start_time = time.time()
-for asset in data:
-    cur.execute("""
-        INSERT INTO assets VALUES (
-            %(id)s,
-            %(asset_class)s,
-            %(exchange)s,
-            %(symbol)s,
-            %(name)s,
-            %(status)s,
-            %(tradable)s,
-            %(marginable)s,
-            %(shortable)s,
-            %(easy_to_borrow)s,
-            %(fractionable)s,
-            %(min_order_size)s,
-            %(min_trade_increment)s,
-            %(price_increment)s
+with engine.connect() as connection:
+    connection.execute(text("""
+        CREATE TABLE IF NOT EXISTS assets (
+            id TEXT PRIMARY KEY,
+            asset_class TEXT,
+            exchange TEXT,
+            symbol TEXT,
+            name TEXT,
+            status TEXT,
+            tradable BOOLEAN,
+            marginable BOOLEAN,
+            shortable BOOLEAN,
+            easy_to_borrow BOOLEAN,
+            fractionable BOOLEAN,
+            min_order_size REAL,
+            min_trade_increment REAL,
+            price_increment REAL
         )
-    """, asset)
-conn.commit()
-end_time = time.time()
-print(f"この一連の処理にかかった時間: {end_time - start_time} 秒")
+    """))
+
+    # データを削除
+    connection.execute(text("""
+        DELETE FROM assets
+    """))
+
+    # データを挿入
+    start_time = time.time()
+    connection.execute(text("""
+        INSERT INTO assets VALUES (
+            :id,
+            :asset_class,
+            :exchange,
+            :symbol,
+            :name,
+            :status,
+            :tradable,
+            :marginable,
+            :shortable,
+            :easy_to_borrow,
+            :fractionable,
+            :min_order_size,
+            :min_trade_increment,
+            :price_increment
+        )
+    """), data)
+    end_time = time.time()
+    print(f"この一連の処理にかかった時間: {end_time - start_time} 秒")
 
