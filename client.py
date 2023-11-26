@@ -1,3 +1,4 @@
+from concurrent.futures import ProcessPoolExecutor
 from contextlib import closing
 from dataclasses import dataclass
 from typing import List
@@ -39,16 +40,20 @@ class PostgresClient:
             session.bulk_insert_mappings(model, data)
             session.commit()
 
-    def insert_models(self, model: Base, data: List[dict], batch_size: int = 500):
+    def insert_batch(self, model: Base, batch: List[dict]):
+        with self.engine.connect() as conn:
+            table = model.__table__
+            stmt = insert(table).values(batch)
+            do_nothing_stmt = stmt.on_conflict_do_nothing(index_elements=['id'])
+            conn.execute(do_nothing_stmt)
+            conn.commit()
+
+    def insert_models(self, model: Base, data: List[dict], batch_size: int = 500, max_workers: int = 8):
         model.metadata.create_all(self.engine)
         batches = [data[i:i + batch_size] for i in range(0, len(data), batch_size)]
-        with self.engine.connect() as conn:
+        with ProcessPoolExecutor(max_workers=max_workers) as executor:
             for batch in batches:
-                table = model.__table__
-                stmt = insert(table).values(batch)
-                do_nothing_stmt = stmt.on_conflict_do_nothing(index_elements=['id'])
-                conn.execute(do_nothing_stmt)
-            conn.commit()
+                executor.submit(self.insert_batch, model, batch)
 
 
 @dataclass
