@@ -1,4 +1,3 @@
-import os
 from contextlib import closing
 from dataclasses import dataclass
 
@@ -49,19 +48,21 @@ class AlpacaApiClient:
     def __post_init__(self):
         self.trading_client = TradingClient(self.api_key, self.secret_key)
 
-    def get_assets(self, asset_class: AssetClass):
+    def fetch_assets(self, asset_class: AssetClass):
         search_params = GetAssetsRequest(asset_class)
         assets = self.trading_client.get_all_assets(search_params)
         return assets
 
-    def get_assets_stock(self):
-        return self.get_assets(asset_class=AssetClass.US_EQUITY)
+    def fetch_assets_stock(self):
+        return self.fetch_assets(asset_class=AssetClass.US_EQUITY)
 
-    def get_assets_crypto(self):
-        return self.get_assets(asset_class=AssetClass.CRYPTO)
+    def fetch_assets_crypto(self):
+        return self.fetch_assets(asset_class=AssetClass.CRYPTO)
 
 
 if __name__ == '__main__':
+    import os
+
     from dotenv import load_dotenv
 
     load_dotenv()
