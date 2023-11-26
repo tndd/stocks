@@ -62,6 +62,7 @@ class PostgresClient:
                     :price_increment
                 ) ON CONFLICT (id) DO NOTHING
             """), data)
+            conn.commit()
 
 
 @dataclass
