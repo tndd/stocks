@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from client import AlpacaApiClient, PostgresClient
+from decorators import count_time
 from models import Asset
 
 
@@ -20,6 +21,7 @@ class AssetRepository:
         fetched_data = self.trading_client.fetch_assets_crypto()
         self.store_assets(fetched_data)
 
+    @count_time
     def fetch_store_assets_all(self):
         self.fetch_store_assets_stock()
         self.fetch_store_assets_crypto()
