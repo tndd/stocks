@@ -6,9 +6,9 @@ from alpaca.trading.client import TradingClient
 from alpaca.trading.enums import AssetClass
 from alpaca.trading.requests import GetAssetsRequest
 from sqlalchemy import create_engine
-from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql import text
 
 from models import Base
 
@@ -42,10 +42,26 @@ class PostgresClient:
     def insert_models(self, model: Base, data: List[dict]):
         model.metadata.create_all(self.engine)
         with self.engine.connect() as conn:
-            table = model.__table__
-            stmt = insert(table).values(data)
-            do_nothing_stmt = stmt.on_conflict_do_nothing(index_elements=['id'])
-            conn.execute(do_nothing_stmt)
+            conn.execute(text("""
+                INSERT INTO assets VALUES (
+                    :id,
+                    :asset_class,
+                    :exchange,
+                    :symbol,
+                    :name,
+                    :status,
+                    :tradable,
+                    :marginable,
+                    :shortable,
+                    :easy_to_borrow,
+                    :fractionable,
+                    :maintenance_margin_requirement,
+                    :attributes,
+                    :min_order_size,
+                    :min_trade_increment,
+                    :price_increment
+                ) ON CONFLICT (id) DO NOTHING
+            """), data)
             conn.commit()
 
 
