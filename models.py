@@ -18,6 +18,8 @@ class Asset(Base):
     shortable = Column(Boolean)
     easy_to_borrow = Column(Boolean)
     fractionable = Column(Boolean)
+    maintenance_margin_requirement = Column(String)
+    attributes = Column(String)
     min_order_size = Column(Float)
     min_trade_increment = Column(Float)
     price_increment = Column(Float)
