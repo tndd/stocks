@@ -1,8 +1,10 @@
-import json
 import time
+from contextlib import closing
 
-from sqlalchemy import Boolean, Column, Float, String, create_engine
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+from models import Base
 
 # PostgreSQL database details
 database = "stocks"
@@ -14,44 +16,22 @@ port = "5432"
 # Create engine
 engine = create_engine(f'postgresql://{user}:{password}@{host}:{port}/{database}')
 
-# Create a Session
-Session = sessionmaker(bind=engine)
-session = Session()
+def create_db_session():
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    return closing(session)
 
-# Define the Asset class
-Base = declarative_base()
 
-class Asset(Base):
-    __tablename__ = 'assets'
-
-    id = Column(String, primary_key=True)
-    asset_class = Column(String)
-    exchange = Column(String)
-    symbol = Column(String)
-    name = Column(String)
-    status = Column(String)
-    tradable = Column(Boolean)
-    marginable = Column(Boolean)
-    shortable = Column(Boolean)
-    easy_to_borrow = Column(Boolean)
-    fractionable = Column(Boolean)
-    min_order_size = Column(Float)
-    min_trade_increment = Column(Float)
-    price_increment = Column(Float)
-
-# assets.jsonからデータを読み込む
-with open('assets.json') as f:
-    data = json.load(f)
-
-# テーブルを作成
-Base.metadata.create_all(engine)
-
-# データを削除
-session.query(Asset).delete()
-
-# データを挿入
-start_time = time.time()
-session.bulk_insert_mappings(Asset, data)
-session.commit()
-end_time = time.time()
-print(f"この一連の処理にかかった時間: {end_time - start_time} 秒")
+def insert_models_to_db(model: Base, data):
+    # テーブルを作成
+    model.metadata.create_all(engine)
+    # データの削除と挿入
+    with create_db_session() as session:
+        # 削除
+        session.query(model).delete()
+        # 挿入
+        start_time = time.time()
+        session.bulk_insert_mappings(model, data)
+        session.commit()
+        end_time = time.time()
+        print(f"insert_models_to_db: {end_time - start_time} sec")
