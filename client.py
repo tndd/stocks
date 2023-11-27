@@ -46,7 +46,6 @@ class PostgresClient:
             stmt = insert(table).values(batch)
             do_nothing_stmt = stmt.on_conflict_do_nothing(index_elements=['id'])
             conn.execute(do_nothing_stmt)
-            conn.commit()
 
     def insert_models(self, model: Base, data: List[dict], max_workers: int = 8):
         model.metadata.create_all(self.engine)
