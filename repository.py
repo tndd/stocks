@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from client import AlpacaApiClient, PostgresClient
 from decorators import count_time
-from models import Asset
+from model import Asset
 
 
 @dataclass
