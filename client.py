@@ -48,9 +48,10 @@ class PostgresClient:
             conn.execute(do_nothing_stmt)
             conn.commit()
 
-    def insert_models(self, model: Base, data: List[dict], batch_size: int = 500, max_workers: int = 8):
+    def insert_models(self, model: Base, data: List[dict], max_workers: int = 8):
         model.metadata.create_all(self.engine)
-        batches = [data[i:i + batch_size] for i in range(0, len(data), batch_size)]
+        chunk = len(data) // max_workers
+        batches = [data[i:i + chunk] for i in range(0, len(data), chunk)]
         with ProcessPoolExecutor(max_workers=max_workers) as executor:
             for batch in batches:
                 executor.submit(self.insert_batch, model, batch)
