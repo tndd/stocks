@@ -9,7 +9,7 @@ from alpaca.trading.requests import GetAssetsRequest
 from sqlalchemy import create_engine
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.engine import Engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session, sessionmaker
 
 from models import Base
 
@@ -40,20 +40,20 @@ class PostgresClient:
             session.bulk_insert_mappings(model, data)
             session.commit()
 
-    def insert_batch(self, model: Base, batch: List[dict]):
-        with self.engine.connect() as conn:
-            table = model.__table__
-            stmt = insert(table).values(batch)
-            do_nothing_stmt = stmt.on_conflict_do_nothing(index_elements=['id'])
-            conn.execute(do_nothing_stmt)
+    def schedule_insert_models(self, model: Base, models: List[dict], session: Session):
+        # Ignore duplicate keys.
+        table = model.__table__
+        stmt = insert(table).values(models)
+        do_nothing_stmt = stmt.on_conflict_do_nothing(index_elements=['id'])
+        session.execute(do_nothing_stmt)
 
-    def insert_models(self, model: Base, data: List[dict], max_workers: int = 8):
+    def schedule_parallel_insert_models(self, model: Base, data: List[dict], session: Session, n_worker: int = 8):
         model.metadata.create_all(self.engine)
-        chunk = len(data) // max_workers
-        batches = [data[i:i + chunk] for i in range(0, len(data), chunk)]
-        with ProcessPoolExecutor(max_workers=max_workers) as executor:
+        n_chunk = len(data) // n_worker
+        batches = [data[i:i + n_chunk] for i in range(0, len(data), n_chunk)]
+        with ProcessPoolExecutor(max_workers=n_worker) as executor:
             for batch in batches:
-                executor.submit(self.insert_batch, model, batch)
+                executor.submit(self.schedule_insert_models, model, batch, session)
 
 
 @dataclass
