@@ -16,5 +16,7 @@ class AssetRepository:
 
     @count_time
     def stage_assets(self, data: List[dict], version: datetime, session: Session):
+        # Add version info to data
         data_with_version = [{'version': version, **asset} for asset in data]
+        # Parallel insert for speed
         self.psql_client.schedule_parallel_insert_models(Asset, data_with_version, session)
