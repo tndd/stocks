@@ -1,16 +1,15 @@
-from dataclasses import dataclass
 from datetime import datetime
 from typing import List
 
+from client import AlpacaApiClient, PostgresClient
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from client import AlpacaApiClient, PostgresClient
-from decorators import count_time
-from model import Asset
+from common.decorators import count_time
+from domain.model.asset import Asset
 
 
-@dataclass
-class AssetRepository:
+class AssetRepository(BaseModel):
     psql_client: PostgresClient
     trading_client: AlpacaApiClient
 

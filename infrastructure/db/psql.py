@@ -1,21 +1,15 @@
 from concurrent.futures import ProcessPoolExecutor
 from contextlib import closing
-from dataclasses import dataclass
 from typing import List
 
-from alpaca.trading.client import TradingClient
-from alpaca.trading.enums import AssetClass
-from alpaca.trading.requests import GetAssetsRequest
+from pydantic import BaseModel
 from sqlalchemy import create_engine
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 
-from model import Base
 
-
-@dataclass
-class PostgresClient:
+class PostgresClient(BaseModel):
     database: str = "stocks"
     user: str = "postgres"
     password: str = "postgres"
@@ -23,7 +17,11 @@ class PostgresClient:
     port: str = "5432"
     engine: Engine = None
 
-    def __post_init__(self):
+    def __init__(self, **data):
+        super().__init__(**data)
+        self._set_engine()
+
+    def _set_engine(self):
         self.engine = create_engine(
             f'postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}'
         )
@@ -54,36 +52,3 @@ class PostgresClient:
         with ProcessPoolExecutor(max_workers=n_worker) as executor:
             for batch in batches:
                 executor.submit(self.schedule_insert_models, model, batch, session)
-
-
-@dataclass
-class AlpacaApiClient:
-    api_key: str
-    secret_key: str
-    trading_client: TradingClient = None
-
-    def __post_init__(self):
-        self.trading_client = TradingClient(self.api_key, self.secret_key)
-
-    def fetch_assets(self, asset_class: AssetClass) -> List[dict]:
-        search_params = GetAssetsRequest(asset_class=asset_class)
-        assets = self.trading_client.get_all_assets(search_params)
-        return [asset.model_dump() for asset in assets]
-
-    def fetch_assets_stock(self) -> List[dict]:
-        return self.fetch_assets(asset_class=AssetClass.US_EQUITY)
-
-    def fetch_assets_crypto(self) -> List[dict]:
-        return self.fetch_assets(asset_class=AssetClass.CRYPTO)
-
-
-if __name__ == '__main__':
-    import os
-
-    from dotenv import load_dotenv
-
-    load_dotenv()
-
-    api_key = os.getenv('API_KEY')
-    secret_key = os.getenv('SECRET_KEY')
-    alpaca_api_client = AlpacaApiClient(api_key, secret_key)

@@ -3,7 +3,7 @@ from datetime import datetime
 
 from sqlalchemy.orm import Session
 
-from repository import AssetRepository
+from domain.repository.asset import AssetRepository
 
 
 @dataclass
