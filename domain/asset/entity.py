@@ -3,8 +3,10 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+from domain.common.entity.table_record import TableRecord
 
-class Asset(BaseModel):
+
+class Asset(TableRecord):
     id: str
     version: datetime
     asset_class: str

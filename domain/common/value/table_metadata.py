@@ -9,3 +9,8 @@ class TableMetaData(BaseModel):
 
     class Config:
         allow_mutation = False
+
+
+class AssetMetaData(TableMetaData):
+    TABLE_NAME = 'asset'
+    PRIMARY_KEYS = ['id', 'version']
