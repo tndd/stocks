@@ -1,14 +1,12 @@
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel
 
-from domain.common.entity.table_record import TableRecord
 
-
-class Asset(TableRecord):
+class Asset(BaseModel):
     id: str
-    version: datetime
+    version: Optional[datetime]
     asset_class: str
     exchange: str
     symbol: str
@@ -20,7 +18,7 @@ class Asset(TableRecord):
     easy_to_borrow: bool
     fractionable: bool
     maintenance_margin_requirement: Optional[str] = None
-    attributes: Optional[str] = None
+    attributes: Optional[List[str]] = None
     min_order_size: Optional[float] = None
     min_trade_increment: Optional[float] = None
     price_increment: Optional[float] = None

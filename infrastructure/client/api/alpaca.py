@@ -23,8 +23,8 @@ class AlpacaApiClient(BaseModel):
         assets = self.trading_client.get_all_assets(search_params)
         return [asset.model_dump() for asset in assets]
 
-    def fetch_assets_stock(self) -> List[dict]:
+    def fetch_stock_assets(self) -> List[dict]:
         return self.fetch_assets(asset_class=AssetClass.US_EQUITY)
 
-    def fetch_assets_crypto(self) -> List[dict]:
+    def fetch_crypto_assets(self) -> List[dict]:
         return self.fetch_assets(asset_class=AssetClass.CRYPTO)
