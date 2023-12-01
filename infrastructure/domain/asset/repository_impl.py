@@ -26,7 +26,9 @@ class AssetRepositoryImpl(AssetRepository, BaseModel):
             raise ValueError(f"Invalid asset_type: {asset_type}")
         return [Asset(**asset_data) for asset_data in data]
 
-    def stage_asset_storing(self, assets: List[Asset], version: datetime):
+    def store_assets(self, assets: List[Asset]):
+        # Same version at this time
+        version: datetime = datetime.now()
         # Add version info to assets
         for asset in assets:
             asset.version = version

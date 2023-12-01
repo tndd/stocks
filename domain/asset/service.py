@@ -1,31 +1,14 @@
 from dataclasses import dataclass
-from datetime import datetime
 
-from sqlalchemy.orm import Session
-
-from domain.repository.asset import AssetRepository
+from .repository import AssetRepository
+from .value import AssetType
 
 
 @dataclass
 class AssetService:
     asset_repositoy: AssetRepository
 
-    def fetch_stage_assets_stock(self, version: datetime, session: Session):
-        fetched_data = self.trading_client.fetch_assets_stock()
-        self.asset_repositoy.stage_assets(fetched_data, version, session)
-
-    def fetch_stage_assets_crypto(self, version: datetime, session: Session):
-        fetched_data = self.trading_client.fetch_assets_crypto()
-        self.asset_repositoy.stage_assets(fetched_data, version, session)
-
     def update_assets(self):
-        version: datetime = datetime.now()
-        session: Session = self.psql_client.create_session()
-        try:
-            session.begin()
-            self.fetch_stage_assets_stock(version, session)
-            self.fetch_stage_assets_crypto(version, session)
-            session.commit()
-        except Exception as e:
-            session.rollback()
-            raise e
+        stock_data = self.asset_repositoy.fetch_assets(AssetType.STOCK)
+        crypto_data = self.asset_repositoy.fetch_assets(AssetType.CRYPTO)
+        self.asset_repositoy.store_assets(stock_data + crypto_data)
