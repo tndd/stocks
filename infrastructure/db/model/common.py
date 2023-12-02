@@ -1,6 +1,7 @@
 from typing import List
 
 from pydantic import BaseModel
+from sqlalchemy.dialects.postgresql import Insert, insert
 
 from infrastructure.db.adapter import Base, to_sqlalchemy_model
 
@@ -28,3 +29,15 @@ class TableDataset(BaseModel):
         Get convert records as a list of dictionaries
         """
         return [record.model_dump() for record in self.records]
+
+    def get_insert_stmt(self, is_ingore_key_conflict: bool = True) -> Insert:
+        # SQLAlchemy model for the table
+        model = self.get_columns_definition()
+        # List of dictionaries representing the records
+        records_data = self.get_records_as_dict()
+        # Create an insert statement for the table
+        stmt = insert(model.__table__).values(records_data)
+        # For case of ignore key conflict
+        if is_ingore_key_conflict:
+            stmt = stmt.on_conflict_do_nothing()
+        return stmt
