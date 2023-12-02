@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 class Asset(BaseModel):
     id: str
-    version: Optional[datetime]
+    version: Optional[datetime] = None
     asset_class: str
     exchange: str
     symbol: str
@@ -17,7 +17,7 @@ class Asset(BaseModel):
     shortable: bool
     easy_to_borrow: bool
     fractionable: bool
-    maintenance_margin_requirement: Optional[str] = None
+    maintenance_margin_requirement: Optional[float] = None
     attributes: Optional[List[str]] = None
     min_order_size: Optional[float] = None
     min_trade_increment: Optional[float] = None

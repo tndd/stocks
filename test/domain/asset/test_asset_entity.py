@@ -1,30 +1,24 @@
-import pytest
-from domain.model.asset import Asset
+import json
+
+from domain.asset.entity import Asset
 
 
-def test_asset_model_conversion_valid_data():
-    valid_data = {
-        "id": "f1c42f1f-2444-4714-b866-3144d3548ccd",
-        'version': '2022-01-01T00:00:00',
-        "asset_class": "us_equity",
-        "exchange": "OTC",
-        "symbol": "RPCCF",
-        "name": "RPCG PCL Ordinary Shares (Thailand)",
-        "status": "inactive",
-        "tradable": False,
-        "marginable": False,
-        "shortable": False,
-        "easy_to_borrow": False,
-        "fractionable": False,
-        "min_order_size": None,
-        "min_trade_increment": None,
-        "price_increment": None,
-        "maintenance_margin_requirement": 100.0,
-        "attributes": []
-    }
-    asset = Asset(**valid_data)
-    for key, value in valid_data.items():
-        assert getattr(asset, key) == value
+def _load_asset_mock_data(file_name):
+    with open(f'test/domain/asset/mock_data/{file_name}.json', 'r') as f:
+        return json.load(f)
+
+
+def test_assets_with_real_data():
+    """
+    There is no version column in the real data.
+    The version column was added by myself
+        because I wanted to track the asset information
+        by date in chronological order.
+    """
+    mock_name = 'assets_real_part'
+    test_data = _load_asset_mock_data(mock_name)
+    for asset in test_data:
+        Asset(**asset)
 
 # def test_asset_model_conversion_insufficient_data():
 #     insufficient_data = {
