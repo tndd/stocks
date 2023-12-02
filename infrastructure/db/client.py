@@ -9,7 +9,7 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 
 from infrastructure.db.model.common import TableDataset
-from infrastructure.db.service import Base
+from infrastructure.db.adapter import Base
 
 
 class PostgresClient(BaseModel):

@@ -2,7 +2,7 @@ from typing import List
 
 from pydantic import BaseModel
 
-from infrastructure.db.service import Base, to_sqlalchemy_model
+from infrastructure.db.adapter import Base, to_sqlalchemy_model
 
 
 class TableMetaData(BaseModel):
