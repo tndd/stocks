@@ -18,7 +18,7 @@ def test_assets_with_real_data():
         because I wanted to track the asset information
         by date in chronological order.
     """
-    mock_name = 'assets_real_part'
+    mock_name = 'real_part'
     test_data = _load_asset_mock_data(mock_name)
     for asset in test_data:
         Asset(**asset)
@@ -28,7 +28,7 @@ def test_assets_with_generated_data():
     Tested using mock data generated
         within the range that theoretically conforms to Asset.
     """
-    mock_name = 'assets_valid_generated'
+    mock_name = 'valid_generated'
     test_data = _load_asset_mock_data(mock_name)
     for asset in test_data:
         Asset(**asset)
