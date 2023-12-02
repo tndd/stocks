@@ -1,4 +1,3 @@
-from concurrent.futures import ProcessPoolExecutor
 from contextlib import closing
 from typing import List
 
@@ -7,6 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import Statement
 
+from infrastructure.common.decorator import count_time
 from infrastructure.db.model.common import TableDataset
 
 
@@ -42,6 +42,7 @@ class PostgresClient(BaseModel):
         session = Session()
         return closing(session)
 
+    @count_time
     def _execute_stmt(self, stmt: Statement):
         with self._create_session() as session:
             try:
