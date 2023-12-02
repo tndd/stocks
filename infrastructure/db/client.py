@@ -8,8 +8,8 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 
-from infrastructure.client.db.data_model import TableDataset
-from infrastructure.client.db.mapper import Base
+from infrastructure.db.model.common import TableDataset
+from infrastructure.db.service import Base
 
 
 class PostgresClient(BaseModel):
@@ -24,22 +24,25 @@ class PostgresClient(BaseModel):
         super().__init__(**data)
         self._set_engine()
 
+    def store_table_dataset(self, table_dataset: TableDataset):
+        # TODO
+        pass
+
+    def store_multi_table_datasets(self, table_datasets: List[TableDataset]):
+        # TODO
+        pass
+
+    # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
     def _set_engine(self):
         self.engine = create_engine(
             f'postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}'
         )
 
-    def create_session(self):
+    def _create_session(self):
         Session = sessionmaker(bind=self.engine)
         session = Session()
         return closing(session)
-
-    def truncate_insert_models(self, model: Base, data: List[dict]):
-        model.metadata.create_all(self.engine)
-        with self.create_session() as session:
-            session.query(model).delete()
-            session.bulk_insert_mappings(model, data)
-            session.commit()
 
     def schedule_insert_models(self, model: Base, models: List[dict], session: Session):
         # DUPULICATE KEY WILL BE IGNORED!

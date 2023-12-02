@@ -1,4 +1,4 @@
-from infrastructure.client.db.data_model import TableMetaData
+from .common import TableMetaData
 
 
 class AssetTableMetaData(TableMetaData):

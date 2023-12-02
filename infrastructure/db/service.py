@@ -6,7 +6,7 @@ from sqlalchemy import (ARRAY, Boolean, Column, DateTime, Float, Integer,
                         PrimaryKeyConstraint, String)
 from sqlalchemy.orm import DeclarativeMeta, declarative_base
 
-from infrastructure.domain.asset.data_model import AssetTableMetaData
+from infrastructure.db.model.asset import AssetTableMetaData
 
 Base: DeclarativeMeta = declarative_base()
 
