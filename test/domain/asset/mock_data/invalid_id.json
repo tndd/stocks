@@ -1,6 +1,6 @@
 [
     {
-        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "id": null,
         "version": "2022-01-01T12:34:56",
         "asset_class": "us_equity",
         "exchange": "NYSE",
@@ -19,7 +19,7 @@
         "price_increment": 0.01
     },
     {
-        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "id": 415411,
         "version": "2022-01-01T12:34:56",
         "asset_class": "us_equity",
         "exchange": "NYSE",
