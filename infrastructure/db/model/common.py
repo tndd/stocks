@@ -17,8 +17,7 @@ class TableDataset(BaseModel):
     metadata: TableMetaData
     records: List[BaseModel]
 
-    @property
-    def columns_definition(self) -> Base:
+    def get_columns_definition(self) -> Base:
         """
         Base model for use with SqlAlchemy
         """
