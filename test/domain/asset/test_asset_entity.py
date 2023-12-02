@@ -10,6 +10,9 @@ def _load_asset_mock_data(file_name):
 
 def test_assets_with_real_data():
     """
+    This test is performed on a piece of real data.
+
+    Note:
     There is no version column in the real data.
     The version column was added by myself
         because I wanted to track the asset information
