@@ -32,7 +32,7 @@
         "easy_to_borrow": false,
         "fractionable": false,
         "maintenance_margin_requirement": 50.0,
-        "attributes": ["finance", "large_cap"],
+        "attributes": ["finance"],
         "min_order_size": 1.0,
         "min_trade_increment": 0.01,
         "price_increment": 0.01
