@@ -1,5 +1,4 @@
 import pytest
-
 from domain.model.asset import Asset
 
 
