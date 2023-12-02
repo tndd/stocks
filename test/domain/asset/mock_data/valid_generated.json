@@ -51,7 +51,7 @@
         "easy_to_borrow": true,
         "fractionable": true,
         "maintenance_margin_requirement": 30.0,
-        "attributes": ["tech", "large_cap"],
+        "attributes": [],
         "min_order_size": 1.0,
         "min_trade_increment": 0.01,
         "price_increment": 0.01
@@ -146,7 +146,7 @@
         "easy_to_borrow": false,
         "fractionable": false,
         "maintenance_margin_requirement": 100.0,
-        "attributes": ["commodity", "precious_metal"],
+        "attributes": ["precious_metal"],
         "min_order_size": 1.0,
         "min_trade_increment": 0.01,
         "price_increment": 0.01
