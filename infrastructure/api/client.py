@@ -13,18 +13,15 @@ class AlpacaApiClient(BaseModel):
 
     def __init__(self, **data):
         super().__init__(**data)
-        self._set_trading_client()
-
-    def _set_trading_client(self):
         self.trading_client = TradingClient(self.api_key, self.secret_key)
 
-    def fetch_assets(self, asset_class: AssetClass) -> List[dict]:
+    def fetch_stock_assets(self) -> List[dict]:
+        return self._fetch_assets(asset_class=AssetClass.US_EQUITY)
+
+    def fetch_crypto_assets(self) -> List[dict]:
+        return self._fetch_assets(asset_class=AssetClass.CRYPTO)
+
+    def _fetch_assets(self, asset_class: AssetClass) -> List[dict]:
         search_params = GetAssetsRequest(asset_class=asset_class)
         assets = self.trading_client.get_all_assets(search_params)
         return [asset.model_dump() for asset in assets]
-
-    def fetch_stock_assets(self) -> List[dict]:
-        return self.fetch_assets(asset_class=AssetClass.US_EQUITY)
-
-    def fetch_crypto_assets(self) -> List[dict]:
-        return self.fetch_assets(asset_class=AssetClass.CRYPTO)
