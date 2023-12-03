@@ -1,4 +1,5 @@
 from contextlib import closing
+from dataclasses import dataclass
 from typing import List
 
 from pydantic import BaseModel
@@ -10,7 +11,8 @@ from common.decorator import count_time
 from infrastructure.db.model.common import TableDataset
 
 
-class PostgresClient(BaseModel):
+@dataclass
+class PostgresClient:
     database: str
     user: str
     password: str

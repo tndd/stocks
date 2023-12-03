@@ -1,7 +1,6 @@
+from dataclasses import dataclass
 from datetime import datetime
 from typing import List
-
-from pydantic import BaseModel
 
 from infrastructure.api.adapter import to_asset_entity
 from infrastructure.api.client import AlpacaApiClient
@@ -13,7 +12,8 @@ from .entity import Asset
 from .value import AssetType
 
 
-class AssetRepository(BaseModel):
+@dataclass
+class AssetRepository:
     psql_client: PostgresClient
     trading_client: AlpacaApiClient
 
