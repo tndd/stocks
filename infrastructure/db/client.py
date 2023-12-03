@@ -6,16 +6,16 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import Statement
 
-from infrastructure.common.decorator import count_time
+from common.decorator import count_time
 from infrastructure.db.model.common import TableDataset
 
 
 class PostgresClient(BaseModel):
-    database: str = "stocks"
-    user: str = "postgres"
-    password: str = "postgres"
-    host: str = "localhost"
-    port: str = "5432"
+    database: str
+    user: str
+    password: str
+    host: str
+    port: str
 
     @property
     def engine(self):
