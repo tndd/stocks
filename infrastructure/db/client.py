@@ -2,8 +2,7 @@ from contextlib import closing
 from dataclasses import dataclass
 from typing import List
 
-from pydantic import BaseModel
-from sqlalchemy import create_engine
+from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import Statement
 
@@ -18,14 +17,12 @@ class PostgresClient:
     password: str
     host: str
     port: str
+    engine: Engine = None
 
-    @property
-    def engine(self):
-        if self._engine is None:
-            self._engine = create_engine(
+    def __post_init__(self):
+        self.engine = create_engine(
                 f'postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}'
             )
-        return self._engine
 
     def store_table_dataset(self, table_ds: TableDataset, is_ignore_key_conflict: bool = True):
         """
